@@ -1,18 +1,21 @@
 import argparse
+import sys
 
+parser = argparse.ArgumentParser(prog = "tosam")
+parser.add_argument("-path", nargs = 1, type = str)
 
-def main():
-    argparser = argparse.ArgumentParser(description="To Simple-SAM converter")
-    argparser.add_argument(
-        "mas",
-        type=argparse.FileType('r')
-    )
-    args = argparser.parse_args()
-    print(args)
-    for line in args.mas:
-        chrom, read_name, read_str, pos = line.split('\t')
-        # Output as Simple-SAM
+args = parser.parse_args()
 
+file_object = open(r"{path}".format(path=args.path[0]), "r")
 
-if __name__ == '__main__':
-    main()
+listy = list()
+for line in file_object:
+	listy.append(line.strip().split("\t"))
+
+for i in listy:
+	readname = i[1]
+	refname = i[0]
+	position = i[3]
+	CIGAR = str(len(i[2])) + "M"
+	readstring = i[2]
+	sys.stdout.write(readname + "\t" + refname + "\t" + position + "\t" + CIGAR + "\t" + readstring + "\n")
